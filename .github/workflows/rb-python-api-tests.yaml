@@ -2,6 +2,10 @@ name: Python Restful-Booker API Tests
 
 on: workflow_dispatch
 
+env:
+  COMPOSE_PATH: sut/restful-booker
+  TEST_PATH: python/restful-booker-tests
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -21,7 +25,7 @@ jobs:
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Start services with Docker Compose
-        working-directory: sut/restful-booker
+        working-directory: ${{ env.COMPOSE_PATH }}
         run: |
           docker compose up -d
           echo "✅ Docker Compose started all services."
@@ -42,14 +46,14 @@ jobs:
           exit 1
 
       - name: Install dependencies with uv
-        working-directory: python/restful-booker-tests
+        working-directory: ${{ env.TEST_PATH }}
         run: |
           uv venv
           source .venv/bin/activate
           uv pip install pytest requests pytest-html
 
       - name: Run pytest
-        working-directory: python/restful-booker-tests
+        working-directory: $TEST_PATH
         env:
           BASE_URL: "http://localhost:3001"
         run: |
@@ -61,8 +65,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: pytest-report
-          path: python/restful-booker-tests/report.html
+          path: ${{ env.TEST_PATH }}/report.html
 
       - name: Stop and clean up containers
         if: always()
+        working-directory: ${{ env.COMPOSE_PATH }}
         run: docker compose down
