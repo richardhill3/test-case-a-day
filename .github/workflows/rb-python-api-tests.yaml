@@ -1,0 +1,69 @@
+name: API Tests (docker-compose + uv)
+
+on:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Start services with Docker Compose
+        working-directory: sut/restful-booker
+        run: |
+          docker compose up -d
+          echo "✅ Docker Compose started all services."
+
+      - name: Wait for Restful Booker service to be ready
+        run: |
+          echo "Waiting for Restful Booker to respond..."
+          for i in {1..30}; do
+            if curl -s http://localhost:3001/ping | grep "Created"; then
+              echo "✅ Restful Booker is ready!"
+              exit 0
+            fi
+            echo "⏳ Waiting ($i/30)..."
+            sleep 2
+          done
+          echo "❌ Restful Booker service did not start in time."
+          docker compose logs
+          exit 1
+
+      - name: Install dependencies with uv
+        working-directory: python/restful-booker-tests
+        run: |
+          uv venv
+          source .venv/bin/activate
+          uv pip install pytest requests pytest-html
+
+      - name: Run pytest
+        working-directory: python/restful-booker-tests
+        env:
+          BASE_URL: "http://localhost:3001"
+        run: |
+          source .venv/bin/activate
+          uv run pytest -v --html=report.html --self-contained-html
+
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-report
+          path: python/restful-booker-tests/report.html
+
+      - name: Stop and clean up containers
+        if: always()
+        run: docker compose down

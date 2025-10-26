@@ -1,0 +1,17 @@
+services:
+  parabank:
+    image: parasoft/parabank:latest
+    container_name: parabank
+    ports:
+      - "8080:8080"   # Web UI
+      - "61616:61616" # Loan Processor JMS service endpoint
+      - "9001:9001"   # Parabank and Bookstore SQL database endpoint 
+    environment:
+      - JAVA_OPTS=-Xmx512m
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/parabank"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s

@@ -1,0 +1,12 @@
+services:
+  restful-booker:
+    image: richard5511/restful-booker
+    ports:
+      - "3001:3001"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
