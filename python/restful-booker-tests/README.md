@@ -8,7 +8,7 @@ Test project in Python using `pytest` and `requests` package to demonstrate func
 
 ## 2. Key Interest Points for learning
 
-* While not required for a simple API, the test project has been developed with a service object model to demonstrate the pattern often used with frameworks like Selninum and Playwright and the Page Object Model can also be utilized for API services.
+* While not required for a simple API, the test project has been developed with a service object model to demonstrate the pattern often used with frameworks like Selenium and Playwright and the Page Object Model can also be utilized for API services.
 * `conftest.py` is being utilized to provide common objects to all tests, ex: `Base_url`, `requests.Session`, and clients for each api endpoint / service for the system under test.
 * GitHub Actions workflow available at `/.github/workflows/rb-python-api-tests.yaml` perform these steps:
   * Pulls main repo
