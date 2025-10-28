@@ -60,3 +60,9 @@ def test_delete_booking_with_invalid_token(booking_api):
     token = "0"
     delete_resp = booking_api.delete(booking_id, token)
     assert delete_resp.status_code == 403
+
+
+def test_delete_booking_with_invalid_id(booking_api, auth_api):
+    token = auth_api.create_token()
+    delete_resp = booking_api.delete(99999, token)
+    assert delete_resp.status_code == 405
