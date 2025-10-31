@@ -7,3 +7,6 @@ class AuthAPI(BaseAPI):
         response = self._post("/auth", payload)
         response.raise_for_status()
         return response.json()["token"]
+
+    def create(self, payload):
+        return self._post("/auth", payload)
