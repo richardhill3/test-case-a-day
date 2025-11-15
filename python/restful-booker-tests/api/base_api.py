@@ -19,5 +19,10 @@ class BaseAPI:
             f"{self.base_url}{endpoint}", data=json.dumps(payload or {}), **kwargs
         )
 
+    def _patch(self, endpoint, payload=None, **kwargs):
+        return self.session.patch(
+            f"{self.base_url}{endpoint}", data=json.dumps(payload or {}), **kwargs
+        )
+
     def _delete(self, endpoint, **kwargs):
         return self.session.delete(f"{self.base_url}{endpoint}", **kwargs)

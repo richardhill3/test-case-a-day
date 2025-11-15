@@ -5,6 +5,8 @@ on: workflow_dispatch
 env:
   COMPOSE_PATH: sut/restful-booker
   TEST_PATH: python/restful-booker-tests
+  AUTH_USERNAME: ${{ secrets.AUTH_USERNAME }}
+  AUTH_PASSWORD: ${{ secrets.AUTH_PASSWORD }}
 
 jobs:
   test:
