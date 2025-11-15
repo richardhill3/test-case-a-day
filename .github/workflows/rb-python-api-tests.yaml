@@ -9,6 +9,7 @@ env:
 jobs:
   test:
     runs-on: ubuntu-latest
+    environment: restful-booker-tests
 
     steps:
       - name: Checkout repository
